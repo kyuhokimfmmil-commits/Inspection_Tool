@@ -1,48 +1,33 @@
 import streamlit as st
 from openai import OpenAI
 
-# 1. 페이지 기본 설정 (아이콘을 사과 모양으로 변경)
-st.set_page_config(page_title="ACL 문제검수 시스템", page_icon="✅", layout="wide")
+st.set_page_config(page_title="ACL 문제검수 시스템", page_icon="🍏", layout="wide")
 
-# 2. 애플 감성 커스텀 CSS 주입
 st.markdown("""
     <style>
-    /* 기본 폰트 설정 (Apple SD Gothic Neo, Pretendard 등 깔끔한 산세리프 폰트 강제 적용) */
     * {
         font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
     
-    /* 메인 배경(아주 밝은 웜그레이) 및 텍스트 색상 */
     .stApp {
         background-color: #FBFBFD; 
         color: #1D1D1F;
     }
 
-    /* 상단 기본 메뉴 및 푸터 등 불필요한 요소 숨기기 */
     header {visibility: hidden;}
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 
-    /* 메인 로고 및 서브타이틀 타이포그래피 */
-    .apple-logo {
-        text-align: center;
-        font-weight: 700;
-        font-size: 38px;
-        letter-spacing: -0.015em;
-        color: #1D1D1F;
-        margin-top: 1rem;
-        margin-bottom: 0.2rem;
-    }
     .apple-subtitle {
         text-align: center;
         font-weight: 400;
         font-size: 20px;
-        color: #86868B; /* 애플 특유의 세컨더리 텍스트 컬러 */
+        color: #86868B;
         letter-spacing: -0.01em;
         margin-bottom: 3.5rem;
+        margin-top: 0.5rem;
     }
 
-    /* 텍스트 에어리어 (모서리 둥글게, 그림자, 포커스 효과) */
     .stTextArea textarea {
         background-color: #FFFFFF;
         border: 1px solid #D2D2D7;
@@ -55,15 +40,14 @@ st.markdown("""
         transition: all 0.3s ease;
     }
     .stTextArea textarea:focus {
-        border-color: #007AFF; /* 애플 블루 */
-        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1); /* 맥OS 포커스 링 효과 */
+        border-color: #007AFF;
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
     }
 
-    /* 버튼 스타일링 (알약 모양, 그라데이션 없음, 깔끔한 그림자) */
     .stButton button {
         background-color: #007AFF;
         color: white;
-        border-radius: 980px; /* 완전한 둥근 모서리 */
+        border-radius: 980px;
         padding: 14px 28px;
         font-size: 17px;
         font-weight: 600;
@@ -80,7 +64,6 @@ st.markdown("""
         color: white;
     }
     
-    /* 라벨 텍스트 스타일링 */
     .input-label {
         font-weight: 600; 
         font-size: 15px;
@@ -90,29 +73,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. 사이드바 (미니멀하게 구성)
 with st.sidebar:
     st.markdown("<h3 style='color: #1D1D1F; font-weight: 600;'>Settings</h3>", unsafe_allow_html=True)
     api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-...")
     st.caption("API 키는 서버에 저장되지 않으며 즉시 폐기됩니다.")
 
-# 4. 헤더 렌더링 (기본 st.title 대신 HTML 클래스 사용)
-st.markdown("<div class='apple-logo'>ACL Communication</div>", unsafe_allow_html=True)
+logo_col1, logo_col2, logo_col3 = st.columns([1, 1, 1])
+with logo_col2:
+    st.image("50095.jpg", use_container_width=True)
 st.markdown("<div class='apple-subtitle'>문제검수 시스템</div>", unsafe_allow_html=True)
 
-# 5. 메인 레이아웃 (좌우 분할)
-col1, col2 = st.columns(2, gap="large") # gap을 넓게 주어 여백의 미 강조
+col1, col2 = st.columns(2, gap="large")
 
 with col1:
     st.markdown("<div class='input-label'>문제편</div>", unsafe_allow_html=True)
-    # label_visibility="collapsed"를 통해 기본 라벨을 숨기고 위의 커스텀 라벨 사용
     question_text = st.text_area("문제편", height=550, label_visibility="collapsed", placeholder="문제 텍스트를 입력하세요...")
 
 with col2:
     st.markdown("<div class='input-label'>해설편</div>", unsafe_allow_html=True)
     answer_text = st.text_area("해설편", height=550, label_visibility="collapsed", placeholder="해설 텍스트를 입력하세요...")
 
-# 6. 실행 버튼 및 백엔드 로직
 if st.button("검토 시작"):
     if not api_key:
         st.error("좌측 사이드바에 API 키를 입력해주세요.")
