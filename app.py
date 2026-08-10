@@ -81,18 +81,18 @@ with st.sidebar:
     api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-...")
     st.caption("API 키는 서버에 저장되지 않으며 즉시 폐기됩니다.")
 
-header_col1, header_col2 = st.columns([1, 3])
+header_col1, header_col2 = st.columns([1, 4])
 
 with header_col1:
     st.image("acl_logo.png", use_container_width=True)
 
 with header_col2:
     st.markdown("""
-        <div style="padding-top: 12px; padding-left: 10px;">
-            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.15em; color: #007AFF; margin-bottom: 4px;">
-                LEGAL CONTENT VERIFICATION
+        <div style="padding-top: 18px; padding-left: 5px;">
+            <div style="font-size: 15px; font-weight: 800; letter-spacing: 0.12em; color: #1D1D1F; margin-bottom: 2px;">
+                CONTENT VERIFICATION
             </div>
-            <div style="font-size: 28px; font-weight: 800; color: #1D1D1F; letter-spacing: -0.02em;">
+            <div style="font-size: 34px; font-weight: 800; color: #1D1D1F; letter-spacing: -0.03em;">
                 문제 검수 시스템
             </div>
         </div>
