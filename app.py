@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from openai import OpenAI
+import google.generativeai as genai
 
 st.set_page_config(
     page_title="ACL 문제검수 시스템", 
@@ -122,7 +122,7 @@ components.html(
 
 with st.sidebar:
     st.markdown("<h3 style='color: #1D1D1F; font-weight: 600;'>⚙️ Settings</h3>", unsafe_allow_html=True)
-    api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-...")
+    api_key = st.text_input("Gemini API Key", type="password", placeholder="AIza...")
     st.caption("API 키는 서버에 저장되지 않으며 즉시 폐기됩니다.")
 
 header_col1, header_col2 = st.columns([1, 4], vertical_alignment="center")
@@ -169,7 +169,7 @@ if start_review:
         st.error("문제편과 해설편 텍스트를 모두 입력해주세요.")
     else:
         try:
-            client = OpenAI(api_key=api_key)
+            genai.configure(api_key=api_key)
             
             system_prompt = """
             너는 법학 기출문제 원고를 검수하는 최고 수준의 연구 조교야.
@@ -194,7 +194,7 @@ if start_review:
 
             [검토 및 출력 지시사항]
             - 논리가 완벽하게 들어맞는 정상 문항은 입 밖으로 꺼내지도 마. "이상 없음"이라는 말조차 출력하지 마.
-            - 오직 '정답표 누락 번호'와 '진짜 오류가 발생한 문항'만 골라내어 결과물로 보여줘.
+            - 오직 '정답표 누락 번호'와 '오류가 발생한 문항'만 골라내어 결과물로 보여줘.
 
             [출력 형식]
             오직 아래 두 가지만 출력해.
@@ -202,20 +202,17 @@ if start_review:
             오류: 검토 기준에 어긋나서 앞뒤가 안 맞는 문항 번호를 적고, 그 이유를 아주 짧고 간단하게 한 줄로 설명할 것.
             """
             
+            model = genai.GenerativeModel('gemini-1.5-pro', system_instruction=system_prompt)
             user_prompt = f"<문제편>\n{question_text}\n\n<해설편>\n{answer_text}"
             
             with st.spinner("검토 중입니다..."):
-                response = client.chat.completions.create(
-                    model="gpt-4o", 
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt}
-                    ],
-                    temperature=0.1 
+                response = model.generate_content(
+                    user_prompt,
+                    generation_config=genai.types.GenerationConfig(temperature=0.1)
                 )
             
             st.success("검토 완료!")
-            st.markdown(response.choices[0].message.content)
+            st.markdown(response.text)
             
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
