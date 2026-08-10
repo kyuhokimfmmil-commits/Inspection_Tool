@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from openai import OpenAI
 
 st.set_page_config(
@@ -7,6 +8,15 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+if 'q_input' not in st.session_state:
+    st.session_state.q_input = ""
+if 'a_input' not in st.session_state:
+    st.session_state.a_input = ""
+
+def reset_inputs():
+    st.session_state.q_input = ""
+    st.session_state.a_input = ""
 
 st.markdown("""
     <style>
@@ -38,7 +48,25 @@ st.markdown("""
         box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
     }
 
-    .stButton button {
+    .stButton button[kind="secondary"] {
+        background-color: #E5E5EA;
+        color: #1D1D1F;
+        border-radius: 980px;
+        padding: 14px 28px;
+        font-size: 17px;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 10px;
+    }
+    .stButton button[kind="secondary"]:hover {
+        background-color: #D1D1D6;
+        transform: translateY(-1px);
+    }
+
+    .stButton button[kind="primary"] {
         background-color: #007AFF;
         color: white;
         border-radius: 980px;
@@ -51,7 +79,7 @@ st.markdown("""
         width: 100%;
         margin-top: 10px;
     }
-    .stButton button:hover {
+    .stButton button[kind="primary"]:hover {
         background-color: #0071E3;
         box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
         transform: translateY(-1px);
@@ -75,6 +103,22 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
+components.html(
+    """
+    <script>
+    const doc = window.parent.document;
+    doc.addEventListener('keydown', function(event) {
+        if ((event.key === 'c' || event.key === 'C') && event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    }, true);
+    </script>
+    """,
+    height=0,
+    width=0,
+)
 
 with st.sidebar:
     st.markdown("<h3 style='color: #1D1D1F; font-weight: 600;'>⚙️ Settings</h3>", unsafe_allow_html=True)
@@ -104,13 +148,21 @@ col1, col2 = st.columns(2, gap="large")
 
 with col1:
     st.markdown("<div class='input-label'>문제편</div>", unsafe_allow_html=True)
-    question_text = st.text_area("문제편", height=550, label_visibility="collapsed", placeholder="문제 텍스트를 입력하세요...")
+    question_text = st.text_area("문제편", height=550, label_visibility="collapsed", placeholder="문제 텍스트를 입력하세요...", key="q_input")
 
 with col2:
     st.markdown("<div class='input-label'>해설편</div>", unsafe_allow_html=True)
-    answer_text = st.text_area("해설편", height=550, label_visibility="collapsed", placeholder="해설 텍스트를 입력하세요...")
+    answer_text = st.text_area("해설편", height=550, label_visibility="collapsed", placeholder="해설 텍스트를 입력하세요...", key="a_input")
 
-if st.button("검토 시작"):
+btn_col1, btn_col2 = st.columns(2, gap="large")
+
+with btn_col1:
+    st.button("초기화", on_click=reset_inputs, type="secondary")
+
+with btn_col2:
+    start_review = st.button("검토 시작", type="primary")
+
+if start_review:
     if not api_key:
         st.error("좌측 사이드바에 API 키를 입력해주세요.")
     elif not question_text or not answer_text:
@@ -121,18 +173,20 @@ if st.button("검토 시작"):
             
             system_prompt = """
             너는 형사법 기출문제를 검수하는 똑똑하고 유능한 연구 조교야.
-            문제편과 해설편을 줄 텐데, 전체적인 흐름과 맥락을 파악해서 진짜로 이상한 부분만 나에게 보고해 줘.
+            지금부터 40문제 분량의 문제편과 해설편을 줄 텐데, 전체적인 흐름과 맥락을 파악해서 진짜로 이상한 부분만 나에게 보고해 줘.
 
-            가장 먼저 해설편에 있는 정답표를 보고 누락된 빈칸이 있는지 확인해 줘. (정답표는 있을때도 있고 없을때도 있음)
-            그리고 문제의 발문과 해설 내용이 앞뒤가 안 맞는 모순을 찾아내면 돼. 예를 들어 정답표에는 3번이라고 되어있는데 해설은 4번을 정답으로 설명한다거나, 틀린 걸 찾으라는 문제인데 해설은 정답 선지를 맞는 내용이라고 설명하는 경우 말이야.
+            가장 먼저 해설편에 있는 정답표를 보고 누락된 빈칸이 있는지 확인해 줘.
+            그리고 문제의 발문과 해설 내용이 앞뒤가 안 맞는 진짜 모순만 찾아내면 돼. 
+            예를 들어 정답표에는 3번이라고 되어있는데 같은 번호의 해설은 4번을 정답으로 가리키면 틀리겠지
+            그리고 예컨대 틀린 걸 찾으라는 문제인데 해설은 맞는 선지를 정답이라고 설명하는 경우처럼
+            너가 똑똑하게 유동적으로 잘 검수해줘
 
-            앞뒤 논리가 잘 맞고 정상적인 문항은 굳이 설명할 필요 없고
-            오직 표에서 누락된 번호랑 진짜로 논리가 어긋나는 문항만 골라서 왜 이상한지 나한테 자연스럽게 설명해 주면 돼.
+            앞뒤 논리가 잘 맞고 정상적인 문항은 언급이나 설명 할 필요 없고, 정상이라는 말도 할 필요 없어
             """
             
             user_prompt = f"<문제편>\n{question_text}\n\n<해설편>\n{answer_text}"
             
-            with st.spinner("검토 중입니다..."):
+            with st.spinner("텍스트 정합성을 정밀 검토 중입니다..."):
                 response = client.chat.completions.create(
                     model="gpt-4o", 
                     messages=[
