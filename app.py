@@ -2,7 +2,7 @@ import streamlit as st
 from openai import OpenAI
 
 # 페이지 기본 설정
-st.set_page_config(page_title="형사법 원고 검수기", page_icon="✅", layout="wide")
+st.set_page_config(page_title="ACL 기출 및 해설 검수 시스템", page_icon="✅", layout="wide")
 
 # 사이드바: API 키 입력
 with st.sidebar:
@@ -10,7 +10,7 @@ with st.sidebar:
     api_key = st.text_input("OpenAI API Key를 입력하세요", type="password")
 
 # 메인 헤더
-st.title("✅ 형사법 기출 및 해설 검수 시스템")
+st.title("✅ ACL 기출 및 해설 검수 시스템")
 st.write("문제편과 해설편 텍스트를 각각 붙여넣고 하단의 검토 시작 버튼을 눌러주세요.")
 
 # 좌우 화면 분할
