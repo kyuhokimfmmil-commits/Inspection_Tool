@@ -194,7 +194,7 @@ if start_review:
 
             [검토 및 출력 지시사항]
             - 논리가 완벽하게 들어맞는 정상 문항은 입 밖으로 꺼내지도 마. "이상 없음"이라는 말조차 출력하지 마.
-            - 오직 '정답표 누락 번호'와 '오류가 발생한 문항'만 골라내어 결과물로 보여줘.
+            - 오직 '정답표 누락 번호'와 '진짜 오류가 발생한 문항'만 골라내어 결과물로 보여줘.
 
             [출력 형식]
             오직 아래 두 가지만 출력해.
@@ -202,7 +202,7 @@ if start_review:
             오류: 검토 기준에 어긋나서 앞뒤가 안 맞는 문항 번호를 적고, 그 이유를 아주 짧고 간단하게 한 줄로 설명할 것.
             """
             
-           model = genai.GenerativeModel('gemini-1.5-pro-latest', system_instruction=system_prompt)
+            model = genai.GenerativeModel('gemini-1.5-pro-latest', system_instruction=system_prompt)
             user_prompt = f"<문제편>\n{question_text}\n\n<해설편>\n{answer_text}"
             
             with st.spinner("검토 중입니다..."):
