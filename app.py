@@ -80,7 +80,7 @@ with st.sidebar:
 
 logo_col1, logo_col2, logo_col3 = st.columns([1, 1, 1])
 with logo_col2:
-    st.image("50095.jpg", use_container_width=True)
+    st.image("acl_logo.jpg", use_container_width=True)
 st.markdown("<div class='apple-subtitle'>문제검수 시스템</div>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2, gap="large")
