@@ -202,7 +202,7 @@ if start_review:
             오류: 검토 기준에 어긋나서 앞뒤가 안 맞는 문항 번호를 적고, 그 이유를 아주 짧고 간단하게 한 줄로 설명할 것.
             """
             
-            model = genai.GenerativeModel('gemini-1.5-pro', system_instruction=system_prompt)
+           model = genai.GenerativeModel('gemini-1.5-pro-latest', system_instruction=system_prompt)
             user_prompt = f"<문제편>\n{question_text}\n\n<해설편>\n{answer_text}"
             
             with st.spinner("검토 중입니다..."):
