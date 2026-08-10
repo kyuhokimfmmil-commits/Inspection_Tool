@@ -1,7 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 
-st.set_page_config(page_title="ACL 문제검수 시스템", page_icon="🍏", layout="wide")
+st.set_page_config(page_title="ACL 문제검수 시스템", page_icon="✅", layout="wide")
 
 st.markdown("""
     <style>
@@ -70,6 +70,15 @@ st.markdown("""
         margin-bottom: 8px; 
         color: #1D1D1F;
     }
+
+    [data-testid="stImage"] {
+        display: flex;
+        justify-content: center;
+    }
+    [data-testid="stImage"] img {
+        mix-blend-mode: multiply;
+        object-fit: contain;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -78,7 +87,7 @@ with st.sidebar:
     api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-...")
     st.caption("API 키는 서버에 저장되지 않으며 즉시 폐기됩니다.")
 
-logo_col1, logo_col2, logo_col3 = st.columns([1, 1, 1])
+logo_col1, logo_col2, logo_col3 = st.columns([1, 1.5, 1])
 with logo_col2:
     st.image("acl_logo.png", use_container_width=True)
 st.markdown("<div class='apple-subtitle'>문제검수 시스템</div>", unsafe_allow_html=True)
