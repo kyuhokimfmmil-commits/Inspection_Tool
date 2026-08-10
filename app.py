@@ -157,10 +157,10 @@ with col2:
 btn_col1, btn_col2 = st.columns(2, gap="large")
 
 with btn_col1:
-    st.button("초기화", on_click=reset_inputs, type="secondary")
+    start_review = st.button("검토 시작", type="primary")
 
 with btn_col2:
-    start_review = st.button("검토 시작", type="primary")
+    st.button("초기화", on_click=reset_inputs, type="secondary")
 
 if start_review:
     if not api_key:
@@ -176,12 +176,10 @@ if start_review:
             지금부터 40문제 분량의 문제편과 해설편을 줄 텐데, 전체적인 흐름과 맥락을 파악해서 진짜로 이상한 부분만 나에게 보고해 줘.
 
             가장 먼저 해설편에 있는 정답표를 보고 누락된 빈칸이 있는지 확인해 줘.
-            그리고 문제의 발문과 해설 내용이 앞뒤가 안 맞는 진짜 모순만 찾아내면 돼. 
-            예를 들어 정답표에는 3번이라고 되어있는데 같은 번호의 해설은 4번을 정답으로 가리키면 틀리겠지
-            그리고 예컨대 틀린 걸 찾으라는 문제인데 해설은 맞는 선지를 정답이라고 설명하는 경우처럼
-            너가 똑똑하게 유동적으로 잘 검수해줘
+            그리고 문제의 발문과 해설 내용이 앞뒤가 안 맞는 진짜 모순만 찾아내면 돼. 예를 들어 정답표에는 3번이라고 되어있는데 해설은 4번을 정답으로 설명한다거나, 틀린 걸 찾으라는 문제인데 해설은 정답 선지를 맞는 내용이라고 설명하는 경우 말이야.
 
-            앞뒤 논리가 잘 맞고 정상적인 문항은 언급이나 설명 할 필요 없고, 정상이라는 말도 할 필요 없어
+            앞뒤 논리가 잘 맞고 정상적인 문항은 절대 언급하지 마. 정상이라는 말도 할 필요 없어.
+            오직 표에서 누락된 번호랑 진짜로 논리가 어긋나는 문항만 골라서 왜 이상한지 나한테 자연스럽게 설명해 주면 돼.
             """
             
             user_prompt = f"<문제편>\n{question_text}\n\n<해설편>\n{answer_text}"
