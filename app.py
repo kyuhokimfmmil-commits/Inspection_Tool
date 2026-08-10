@@ -81,14 +81,14 @@ with st.sidebar:
     api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-...")
     st.caption("API 키는 서버에 저장되지 않으며 즉시 폐기됩니다.")
 
-header_col1, header_col2 = st.columns([1, 3.5])
+header_col1, header_col2 = st.columns([1, 4], vertical_alignment="center")
 
 with header_col1:
     st.image("acl_logo.png", use_container_width=True)
 
 with header_col2:
     st.markdown("""
-        <div style="padding-top: 35px; padding-left: 10px;">
+        <div style="padding-left: 10px;">
             <div style="font-size: 16px; font-weight: 800; letter-spacing: 0.12em; color: #1D1D1F; margin-bottom: 2px;">
                 CONTENT VERIFICATION
             </div>
@@ -120,13 +120,14 @@ if st.button("검토 시작"):
             client = OpenAI(api_key=api_key)
             
             system_prompt = """
-            당신은 형사법 기출문제와 해설의 논리적 정합성을 검수하는 전문 교정자입니다.
+            당신은 기출문제와 해설의 논리적 정합성을 검수하는 전문 교정자입니다.
             법리적 타당성 검토보다는 텍스트 간의 기계적인 대조 작업과 형식 오류 탐지에 집중하십시오.
             입력된 <문제편>과 <해설편>을 대조하여 다음을 엄격하게 검증하십시오.
             
             1. 정답 일치 여부: 문제 발문(옳은/옳지 않은/개수 등)과 선지, 해설의 정답 기호가 완벽히 일치하는지.
             2. 해설 정합성: 해설의 O/X 판단 내용이 선지 내용과 모순되지 않는지.
-            3. 판례 인용: 대법원 판례 번호와 판시 내용이 선지 맥락에 맞게 배치되었는지 (순서 뒤바뀜 등 탐지).
+            3. 형식 정합성: 해설에서 O/X 등 일관된 형식에서 벗어난 것이 있는지.
+            4. 정답과의 비교: 전체적으로 문제편과 해설편이 잘 대조되는지
             
             [출력 형식]
             - 오류가 없는 문항: "✅ [N번] 이상 없음"
